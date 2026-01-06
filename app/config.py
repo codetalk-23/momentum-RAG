@@ -208,6 +208,8 @@ GOOGLE_KEY = get_env_variable("GOOGLE_KEY", GOOGLE_API_KEY)
 RAG_GOOGLE_API_KEY = get_env_variable("RAG_GOOGLE_API_KEY", GOOGLE_KEY)
 AWS_SESSION_TOKEN = get_env_variable("AWS_SESSION_TOKEN", "")
 GOOGLE_APPLICATION_CREDENTIALS = get_env_variable("GOOGLE_APPLICATION_CREDENTIALS", "")
+GOOGLE_CLOUD_PROJECT = get_env_variable("GOOGLE_CLOUD_PROJECT", "seventh-magnet-472307-a8")
+GOOGLE_CLOUD_LOCATION = get_env_variable("GOOGLE_CLOUD_LOCATION", "europe-west1")
 env_value = get_env_variable("RAG_CHECK_EMBEDDING_CTX_LENGTH", "True").lower()
 RAG_CHECK_EMBEDDING_CTX_LENGTH = True if env_value == "true" else False
 
@@ -261,7 +263,11 @@ def init_embeddings(provider, model):
     elif provider == EmbeddingsProvider.GOOGLE_VERTEXAI:
         from langchain_google_vertexai import VertexAIEmbeddings
 
-        return VertexAIEmbeddings(model=model)
+        return VertexAIEmbeddings(
+            model=model,
+            project=GOOGLE_CLOUD_PROJECT,
+            location=GOOGLE_CLOUD_LOCATION,
+        )
     elif provider == EmbeddingsProvider.BEDROCK:
         from langchain_aws import BedrockEmbeddings
 
@@ -305,7 +311,7 @@ elif EMBEDDINGS_PROVIDER == EmbeddingsProvider.HUGGINGFACETEI:
         "EMBEDDINGS_MODEL", "http://huggingfacetei:3000"
     )
 elif EMBEDDINGS_PROVIDER == EmbeddingsProvider.GOOGLE_VERTEXAI:
-    EMBEDDINGS_MODEL = get_env_variable("EMBEDDINGS_MODEL", "text-embedding-004")
+    EMBEDDINGS_MODEL = get_env_variable("EMBEDDINGS_MODEL", "gemini-embedding-001")
 elif EMBEDDINGS_PROVIDER == EmbeddingsProvider.OLLAMA:
     EMBEDDINGS_MODEL = get_env_variable("EMBEDDINGS_MODEL", "nomic-embed-text")
 elif EMBEDDINGS_PROVIDER == EmbeddingsProvider.GOOGLE_GENAI:
